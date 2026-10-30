@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" data-theme="varsity" data-bg="stars" data-font="modern">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Praxis</title>
+<meta name="theme-color" content="#12060a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%2312060a' stroke='%23ff5a6e' stroke-width='2'/%3E%3Ctext x='32' y='33' text-anchor='middle' dominant-baseline='central' font-family='serif' font-weight='700' font-size='30' fill='%23ff5a6e'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=JetBrains+Mono:wght@500;700&family=Nunito:wght@600;700;800&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/00-site-config.js"></script>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<header class="top">
+  <a class="brand" href="#home">
+    <svg viewBox="0 0 64 64" class="brand-mark"><rect class="badge" x="4" y="4" width="56" height="56" rx="14"/><text class="glyph" x="32" y="33" text-anchor="middle" dominant-baseline="central" font-family="Spectral,Georgia,serif" font-weight="700" font-size="30">P</text></svg>
+    <span class="word">PRAXIS</span>
+  </a>
+  <div class="seg" id="seg"><button data-go="home">Planner</button><button data-go="week">Week</button></div>
+  <div class="tools">
+    <button class="ib" data-go="classes" title="Classes"><i data-lucide="calendar-days"></i></button>
+    <button class="ib" data-go="focus" title="Focus"><i data-lucide="timer"></i></button>
+    <button class="ib" id="btnClio" title="Ask Clio"><i data-lucide="bot"></i></button>
+    <button class="ib" data-go="set" title="Customs"><i data-lucide="sliders-horizontal"></i></button>
+    <button class="ib" data-go="about" title="About"><i data-lucide="circle-help"></i></button>
+    <div class="menuwrap">
+      <button class="ib sq" id="btnMore" title="More"><i data-lucide="ellipsis"></i></button>
+      <div class="menu" id="menu"><button id="mQuick">Quick add <kbd>Ctrl K</kbd></button><button data-go="set">Customs</button><button id="mReset">Reset my data</button></div>
+    </div>
+    <button class="ib" id="btnMode" title="Light / dark"><i data-lucide="sun"></i></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="view on" id="v-home">
+    <div class="hero glow">
+      <button class="daychip" id="dayChip"></button>
+      <h1>Homework,<br>Mapped Out</h1>
+      <p class="tag">Studying, Redefined.</p>
+      <p class="sub">Every assignment tied to the class it belongs to, on the Red and White days it’s actually due. Beat the clock, build a streak, earn your evenings back.</p>
+      <blockquote><p>“Well begun is half done.”</p><cite>Aristotle, Politics</cite></blockquote>
+      <div class="pills" id="flt"></div>
+      <div class="tiles">
+        <button class="tile glow" id="tAdd"><i data-lucide="map" class="big blue"></i><h2>Set Forth: Add Work</h2><p id="tAddN">0 open assignments</p></button>
+        <button class="tile glow" data-go="classes"><i data-lucide="calendar-days" class="big green"></i><h2>Your Classes</h2><p id="tClsN">Upload your schedule</p></button>
+      </div>
+    </div>
+
+    <div class="panel glow" id="addPanel" hidden>
+      <h3>Add an assignment</h3>
+      <input class="fld" id="title" placeholder="What’s due? e.g. Chapter 4 problem set" maxlength="120" autocomplete="off">
+      <h3>Class</h3><div class="chips" id="cls"></div>
+      <h3>Priority</h3><div class="chips" id="prio"></div>
+      <div class="row between">
+        <div class="row"><div class="step"><button id="dm" aria-label="Earlier">−</button><span id="dl"></span><button id="dp" aria-label="Later">+</button></div><button class="chip" id="nextCls">Next class meeting</button></div>
+        <button class="btn" id="add">Add to plan</button>
+      </div>
+    </div>
+
+    <div class="panel glow"><h3>Today</h3><div id="todayStrip"></div></div>
+    <div class="panel glow orbitp"><div><h3>Next deadline</h3><div class="next" id="nextT"></div><div class="cd" id="cd"></div></div><div class="orbit" id="orbit"></div></div>
+    <div class="stats" id="stats"></div>
+    <div id="list"></div>
+  </section>
+
+  <section class="view" id="v-classes">
+    <button class="back" data-go="home">← Back to Praxis</button>
+    <h2 class="vt">Your Classes</h2>
+    <p class="vs">Upload your Red and White schedule once, then link every assignment to its class.</p>
+    <div class="panel glow">
+      <h3>Upload schedule</h3>
+      <button class="drop" id="drop"><i data-lucide="upload" class="big"></i><strong>Drop a photo or screenshot of your schedule</strong><span>Clio reads it and builds your Red and White days. You review everything before it’s saved.</span></button>
+      <input type="file" id="file" accept="image/png,image/jpeg,image/webp" hidden>
+      <div id="review" hidden></div>
+    </div>
+    <div class="panel glow">
+      <h3>Day rotation</h3>
+      <p>Which day is it today? Praxis alternates on school days and skips weekends.</p>
+      <div class="row between"><div class="chips" id="rot" style="margin:0"></div><span id="rotNote" class="mutedsm"></span></div>
+    </div>
+    <div class="sched" id="sched"></div>
+    <div class="panel glow">
+      <h3>Add a class by hand</h3>
+      <input class="fld" id="cName" placeholder="Class name, e.g. AP Chemistry" maxlength="60" autocomplete="off">
+      <div class="row between" style="margin-top:14px"><div class="row"><div class="step"><button id="pm">−</button><span id="pl"></span><button id="pp">+</button></div><div class="chips" id="cDay" style="margin:0"></div></div><button class="btn" id="cAdd">Add class</button></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-week"><button class="back" data-go="home">← Back to Praxis</button><h2 class="vt">The Week Ahead</h2><p class="vs">Seven days, labelled Red or White. Spread the load before it spreads you.</p><div class="week" id="week"></div></section>
+
+  <section class="view" id="v-focus"><button class="back" data-go="home">← Back to Praxis</button><h2 class="vt">Personal Practice</h2><p class="vs">Work in sprints. Each finished sprint feeds today’s total and keeps your streak alive.</p>
+    <div class="panel glow timer"><div class="pills" id="modes"></div><div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="var(--ln)" stroke-width="3"/><circle id="arc" cx="50" cy="50" r="45" fill="none" stroke="var(--ac)" stroke-width="3" stroke-linecap="round" stroke-dasharray="282.74"/></svg><div class="tt" id="tt">25:00</div></div><div class="row"><button class="btn" id="go">Start</button><button class="btn ghost" id="rs">Reset</button></div></div>
+    <div class="stats" id="fstats"></div></section>
+
+  <section class="view" id="v-set"><button class="back" data-go="home">← Back to Praxis</button><h2 class="vt">Customs</h2><p class="vs">Make Praxis yours. Saved on this device.</p>
+    <div class="panel glow"><h3>Colorway</h3><div class="chips" id="sColor"></div><h3>Background</h3><div class="chips" id="sBg"></div><h3>Font</h3><div class="chips" id="sFont"></div>
+      <div class="set"><div>Animations<small>Turn off for a calmer, faster interface.</small></div><button class="sw" id="sAnim" aria-label="Animations"></button></div>
+      <div class="set"><div>Replay welcome<small>Show the announcement again.</small></div><button class="btn ghost" id="sWelcome">Replay</button></div></div></section>
+
+  <section class="view" id="v-about"><button class="back" data-go="home">← Back to Praxis</button><h2 class="vt">About Praxis</h2>
+    <div class="panel glow"><p>Praxis is the Greek word for practice: knowledge turned into action. It’s a homework planner built around your real schedule, so deadlines line up with the classes that set them.</p><p>Clio, the muse of history, is your study guide. She reads your schedule, knows what’s due, and gives you a plan for tonight.</p>
+    <h3>At a glance</h3><div class="stats"><div class="stat"><b>6</b><span>Views</span></div><div class="stat"><b>7</b><span>Colorways</span></div><div class="stat"><b id="ver">1.0</b><span>Version</span></div></div></div></section>
+</main>
+
+<div class="toast-ann" id="ann"><button class="annbtn" data-go="classes"><span class="annic"><i data-lucide="megaphone"></i><em>1</em></span><strong>Upload your schedule</strong><i data-lucide="arrow-up-right" class="sm"></i></button><button class="annx" id="annx" aria-label="Dismiss"><i data-lucide="x" class="xs"></i></button></div>
+<div class="visits"><i data-lucide="eye" class="xs"></i><span id="visits">0 visits</span></div>
+<button class="fab" id="fab" aria-label="Ask Clio"><i data-lucide="bot"></i></button>
+<div class="clio" id="clio"><div class="ch"><div>Clio<small>Muse of study plans</small></div><button class="ib" id="cx" aria-label="Close"><i data-lucide="x"></i></button></div><div id="msgs"></div><div class="cf"><input class="fld" id="ci" placeholder="Ask for a plan or a memory trick…" autocomplete="off"><button class="btn" id="cs">Send</button></div></div>
+<div class="pal" id="pal" hidden><div class="palbox"><i data-lucide="sparkles"></i><input id="pi" placeholder="math worksheet due friday" autocomplete="off"><kbd>Esc</kbd></div><p class="palhint" id="ph">Type an assignment. Mention a class and a day and Praxis links them.</p></div>
+<div class="toast" id="toast"></div>
+
+<script src="js/10-store.js"></script>
+<script src="js/20-planner.js"></script>
+<script src="js/25-schedule.js"></script>
+<script src="js/30-focus.js"></script>
+<script src="js/40-clio.js"></script>
+<script src="js/90-main.js"></script>
+</body>
+</html>
